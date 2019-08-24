@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-
+import Config from '../config/config';
+import mongodb from '../db/mongodb';
 /**
  * Module dependencies.
  */
@@ -22,13 +23,21 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
+
 /**
  * Listen on provided port, on all network interfaces.
  */
+mongodb.connect(Config.MONGO_URI, (err) => {
+  if (err) {
+    console.error(err);
+  } else {
+    console.log("Mongo Connected successfully");
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening);
+  }
+})
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
